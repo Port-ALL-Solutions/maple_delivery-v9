@@ -1,0 +1,117 @@
+<openerp>
+  <data>
+    <!-- explicit list view definition -->
+
+    <record model="ir.ui.view" id="mapleorder.delivery_list">
+      <field name="name">Syrup Delivery Orders</field>
+      <field name="model">mapleorder.delivery</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="destination" />
+          <field name="scheduled" />
+          <field name="transport" />
+          <field name="notes" />
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="mapleorder.delivery_form">
+      <field name="name">Syrup Delivery</field>
+      <field name="model">mapleorder.delivery</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group>
+              <group>
+                <field name="scheduled" />
+                <field name="destination"/>
+                <field name="transport"/>
+                <field name="notes"/>
+              </group>
+              <group>
+                <img class="img img-responsive" style="width:200px;height:135px;float:right" src="/mapleorder/static/src/img/header.jpg"/>
+              </group>
+            </group>
+            <group string="Included Barrels and Totes">
+              <field name="barrelList" widget="many2many" options="{'no_create': True}" domain="['&amp;', ('processStatus', 'in', ['rated', 'produced']), ('shipped', '=', 'False)]"  >
+                <tree delete="false">
+                  <field name="nameproducer"/>
+                  <field name="grossweight" sum="1"/>
+                  <field name="barrelNumber" />
+                  <field name="seal" />
+                  <field name="type" />
+                  <field name="grade"/>
+                </tree>
+              </field>
+            </group>
+
+            <div class="oe_chatter">
+              <field name="message_follower_ids" widget="mail_followers"/>
+              <field name="message_ids" widget="mail_thread"/>
+            </div>
+            
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="mapleorder.reportdeliveryview">
+      <field name="name">Delivery Report</field>
+      <field name="model">mapleorder.delivery</field>
+      <field name="arch" type="xml">
+        <pivot string="Delivery Report" display_quantity="true">
+          <field name="scheduled" type="row"/>
+          <field name="transport" type="col"/>
+        </pivot>
+      </field>
+    </record>
+
+
+    <!-- actions opening views on models -->
+
+    <record model="ir.actions.act_window" id="mapleorder.delivery_action_window">
+      <field name="name">Delivery Orders</field>
+      <field name="res_model">mapleorder.delivery</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    
+    <record model="ir.actions.act_window" id="mapleorder.delivery_report_window">
+      <field name="name">Delivery Report</field>
+      <field name="res_model">mapleorder.delivery</field>
+      <field name="view_mode">pivot</field>
+    </record>
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="mapledelivery.action_server">
+      <field name="name">mapledelivery server</field>
+      <field name="model_id" ref="model_mapledelivery_mapledelivery"/>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": self._name,
+        }
+      </field>
+    </record>
+    -->
+
+    <!-- Top menu item -->
+
+    <menuitem name="Maple Syrup Delivery" id="mapleorder.delivery_menu_root" sequence="16"/>
+
+    <!-- menu categories -->
+
+    <menuitem name="Delivery Orders" id="mapleorder.delivery_menu_1" parent="mapleorder.delivery_menu_root"/>
+
+    <!-- actions -->
+
+    <menuitem name="Delivery Orders" id="mapleorder.delivery_menu_1_list" parent="mapleorder.delivery_menu_1"
+              action="mapleorder.delivery_action_window"/>
+
+    <menuitem name="Delivery Report" id="mapleorder.delivery_menu_1_report" parent="mapleorder.delivery_menu_root"
+              action="mapleorder.delivery_report_window"/>
+
+  </data>
+</openerp>
